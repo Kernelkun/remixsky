@@ -1,6 +1,6 @@
 import type { MetaFunction } from "@remix-run/node";
 import { agent } from "~/lib/api";
-import { useLoaderData } from "@remix-run/react";
+import { Link, useLoaderData } from "@remix-run/react";
 import { AppBskyFeedDefs, AppBskyFeedPost } from "@atproto/api";
 
 export const meta: MetaFunction = () => {
@@ -33,24 +33,13 @@ export default function Index() {
 
   return (
     <div className="grid min-h-screen place-items-center">
-      <div className="w-full max-w-sm">
-        <div className="flex flex-row items-center">
-          <img
-            src={post.author.avatar}
-            alt={post.author.handle}
-            className="h-12 w-12 rounded-full"
-          />
-
-          <div className="ml-4">
-            <p className="text-lg font-medium">{post.author.displayName}</p>
-
-            <p>@{post.author.handle}</p>
-          </div>
-        </div>
-
-        <div className="mt-4">
-          <p>{post.record.text}</p>
-        </div>
+      <div className="flex flex-col gap-4">
+        <Link to="http://localhost:3000/profile/did:plc:fpruhuo22xkm5o7ttr2ktxdo/post/3k27cy5if2m2o">
+          Text-only post
+        </Link>
+        <Link to="http://localhost:3000/profile/did:plc:fpgzkz4uvutk2kzgx64nt7vx/post/3lbah3bknp22b">
+          Post with link and mention
+        </Link>
       </div>
     </div>
   );

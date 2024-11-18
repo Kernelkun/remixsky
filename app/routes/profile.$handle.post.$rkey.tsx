@@ -2,6 +2,7 @@ import { LoaderFunctionArgs } from "@remix-run/router";
 import { useLoaderData } from "@remix-run/react";
 import { agent } from "~/lib/api";
 import { AppBskyFeedDefs, AppBskyFeedPost } from "@atproto/api";
+import Post from "~/components/Post/Post";
 
 type Params = {
   handle: string;
@@ -49,7 +50,7 @@ export default function PostView() {
         </div>
 
         <div className="mt-4">
-          <p>{post.record.text}</p>
+          <Post post={post} />
         </div>
       </div>
     </div>
