@@ -15,7 +15,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
     typedParams.rkey
   }`;
 
-  const thread = await agent.app.bsky.feed.getPostThread({
+  const thread = await agent.getPostThread({
     uri: uri,
   });
 
@@ -29,6 +29,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
 
   return { post, thread };
 }
+
 export default function PostView() {
   const { post } = useLoaderData<typeof loader>();
 
