@@ -1,7 +1,7 @@
 import type { MetaFunction } from "@remix-run/node";
-import { agent } from "~/lib/api";
-import { Link, useLoaderData } from "@remix-run/react";
-import { AppBskyFeedDefs, AppBskyFeedPost } from "@atproto/api";
+import { Form } from "@remix-run/react";
+import { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/router";
+import { authenticator } from "~/services/auth.server";
 
 export const meta: MetaFunction = () => {
   return [
@@ -10,37 +10,43 @@ export const meta: MetaFunction = () => {
   ];
 };
 
-export async function loader() {
-  const EXAMPLE_POST =
-    "at://did:plc:vwzwgnygau7ed7b7wt5ux7y2/app.bsky.feed.post/3karfx5vrvv23";
-  const thread = await agent.app.bsky.feed.getPostThread({
-    uri: EXAMPLE_POST,
+export async function action({ request }: ActionFunctionArgs) {
+  // we call the method with the name of the strategy we want to use and the
+  // request object, optionally we pass an object with the URLs we want the user
+  // to be redirected to after a success or a failure
+  return await authenticator.authenticate("user-pass", request, {
+    successRedirect: "/dashboard",
+    failureRedirect: "/login",
   });
+}
 
-  if (!AppBskyFeedDefs.isThreadViewPost(thread.data.thread))
-    throw new Error("Expected a thread view post");
-
-  const post = thread.data.thread.post;
-
-  if (!AppBskyFeedPost.isRecord(post.record))
-    throw new Error("Expected a post with a record");
-
-  return { post, thread };
+// We can export a loader function where we check if the user is
+// authenticated with `authenticator.isAuthenticated` and redirect to the
+// dashboard if it is or return null if it's not
+export async function loader({ request }: LoaderFunctionArgs) {
+  // If the user is already authenticated redirect to /dashboard directly
+  return await authenticator.isAuthenticated(request, {
+    successRedirect: "/dashboard",
+  });
 }
 
 export default function Index() {
-  const { post } = useLoaderData<typeof loader>();
-
   return (
     <div className="grid min-h-screen place-items-center">
-      <div className="flex flex-col gap-4">
-        <Link to="http://localhost:3000/profile/did:plc:fpruhuo22xkm5o7ttr2ktxdo/post/3k27cy5if2m2o">
-          Text-only post
-        </Link>
-        <Link to="http://localhost:3000/profile/did:plc:fpgzkz4uvutk2kzgx64nt7vx/post/3lbah3bknp22b">
-          Post with link and mention
-        </Link>
-      </div>
+      <Form
+        method="POST"
+        className="flex flex-col gap-4 [&_label]:flex [&_label]:gap-4"
+      >
+        <label>
+          <span>Identifier</span>
+          <input name="identifier" type="text" required />
+        </label>
+        <label>
+          <span>Password</span>
+          <input name="password" type="password" required />
+        </label>
+        <button type="submit">Submit</button>
+      </Form>
     </div>
   );
 }
