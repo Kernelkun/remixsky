@@ -51,7 +51,7 @@ export default function PostView() {
         </div>
 
         <div className="mt-4">
-          <Post post={post} />
+          <Post post={post as AppBskyFeedDefs.PostView} />
         </div>
       </div>
     </div>

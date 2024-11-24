@@ -1,13 +1,12 @@
-import React from "react";
 import { PostView } from "@atproto/api/src/client/types/app/bsky/feed/defs";
 import { RichText } from "@atproto/api";
 import { Facet } from "@atproto/api/src/rich-text/rich-text";
 
 const Post = ({ post }: { post: PostView }) => {
-  const { text, facets } = post.record;
+  const { text, facets } = post.record as { text: string; facets: Facet[]};
   const rt = new RichText({
-    text: text as string,
-    facets: facets as Facet[],
+    text: text,
+    facets: facets,
   });
 
   const textArray = [];
