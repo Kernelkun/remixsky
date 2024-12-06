@@ -1,18 +1,22 @@
 import { Authenticator } from "remix-auth";
 import { sessionStorage } from "~/services/session.server";
-import type { User } from "~/types/user";
 import { FormStrategy } from "remix-auth-form";
-import { login } from "~/lib/api";
+import { agent, login } from "~/lib/api";
+import { ComAtprotoServerCreateSession } from "@atproto/api/src/client";
 
 // Create an instance of the authenticator, pass a generic with what
 // strategies will return and will store in the session
-export let authenticator = new Authenticator<User>(sessionStorage);
+export let authenticator =
+  new Authenticator<ComAtprotoServerCreateSession.Response>(sessionStorage);
 
 // Tell the Authenticator to use the form strategy
 authenticator.use(
   new FormStrategy(async ({ form }) => {
     let identifier = form.get("identifier") as string;
     let password = form.get("password") as string;
+
+    console.log({ sessionManager: agent.sessionManager });
+
     let user = await login({ identifier, password });
     // the type of this user must match the type you pass to the Authenticator
     // the strategy will automatically inherit the type if you instantiate
