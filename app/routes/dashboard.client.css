@@ -1,0 +1,42 @@
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.grid-item,
+.post-item {
+  position: relative;
+}
+
+.grid-item::before,
+.grid-item::after,
+.post-item::before,
+.post-item::after {
+  content: "";
+  position: absolute;
+  background-color: #333;
+  z-index: 1;
+}
+
+.grid-item::before {
+  width: 1px;
+  height: 100vh;
+  left: -1px;
+  top: 0;
+}
+
+.main-column {
+  grid-column-start: 2;
+  grid-column-end: 4;
+}
+
+.post-item {
+  grid-template-rows: repeat(auto-fit, minmax(0, min-content));
+}
+
+.post-item::after {
+  width: 100vw;
+  height: 1px;
+  left: 0;
+  top: -1px;
+}

@@ -1,5 +1,5 @@
 import type { MetaFunction } from "@remix-run/node";
-import { Form } from "@remix-run/react";
+import { useFetcher } from "@remix-run/react";
 import { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/router";
 import { authenticator } from "~/services/auth.server";
 
@@ -16,37 +16,57 @@ export async function action({ request }: ActionFunctionArgs) {
   // to be redirected to after a success or a failure
   return await authenticator.authenticate("user-pass", request, {
     successRedirect: "/dashboard",
-    failureRedirect: "/login",
+    failureRedirect: "/",
   });
 }
 
-// We can export a loader function where we check if the user is
-// authenticated with `authenticator.isAuthenticated` and redirect to the
-// dashboard if it is or return null if it's not
-export async function loader({ request }: LoaderFunctionArgs) {
-  // If the user is already authenticated redirect to /dashboard directly
-  return await authenticator.isAuthenticated(request, {
-    successRedirect: "/dashboard",
-  });
-}
+export default function Component() {
+  const fetcher = useFetcher();
 
-export default function Index() {
   return (
-    <div className="grid min-h-screen place-items-center">
-      <Form
-        method="POST"
-        className="flex flex-col gap-4 [&_label]:flex [&_label]:gap-4"
-      >
-        <label>
-          <span>Identifier</span>
-          <input name="identifier" type="text" required />
-        </label>
-        <label>
-          <span>Password</span>
-          <input name="password" type="password" required />
-        </label>
-        <button type="submit">Submit</button>
-      </Form>
+    <div className="h-full p-5 text-neutral-800 font-serif">
+      <div className="h-full border-neutral-800 border-[10px] relative">
+        <header className="p-10">
+          <h1 className="text-5xl uppercase tracking-widest">.send</h1>
+        </header>
+
+        <div className="bg-neutral-800 h-[60%] w-[70%] max-w-[70rem] absolute bottom-24 right-40 text-stone-50 p-10 flex flex-col justify-end">
+          <p className="text-7xl h-min tracking-wide">
+            A minimal client for Bsky
+          </p>
+        </div>
+
+        <div className="border-neutral-800 border-4 bg-stone-50 absolute right-12 max-w-[35rem] w-[45%] h-[40%] grid place-items-center">
+          <fetcher.Form method="POST" className="flex flex-col w-min gap-4">
+            <label>
+              <span className="text-lg">Identifier</span>
+              <input
+                className="px-1 bg-slate-50 border-neutral-800 border-2"
+                name="identifier"
+                type="text"
+                required
+              />
+            </label>
+
+            <label>
+              <span className="text-lg">Password</span>
+              <input
+                className="px-1 bg-slate-50 border-neutral-800 border-2"
+                name="password"
+                type="password"
+                required
+              />
+            </label>
+
+            <button
+              className="p-2 bg-neutral-800 border-2 text-stone-50 mt-4"
+              type="submit"
+            >
+              Submit
+            </button>
+          </fetcher.Form>
+        </div>
+      </div>
     </div>
   );
 }
