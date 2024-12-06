@@ -1,12 +1,12 @@
-import { agent } from "~/lib/api";
-import Post from "~/components/Post/Post";
+import { useLoaderData } from "react-router";
 import type { FeedViewPost } from "@atproto/api/src/client/types/app/bsky/feed/defs";
+import Post from "~/components/Post/Post";
+import { agent } from "~/lib/api";
 
 import type { Route } from "./+types/dashboard";
 
 // https://blog.jobins.jp/how-to-set-border-lines-on-a-css-grid-layout
 import styles from "./dashboard.client.css?url";
-import { useLoaderData } from "react-router";
 
 // https://remix.run/docs/en/main/styling/css
 export const links: Route.LinksFunction = () => [

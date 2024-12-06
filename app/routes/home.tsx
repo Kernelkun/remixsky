@@ -1,29 +1,22 @@
-import {
-  type ActionFunctionArgs,
-  type MetaFunction,
-  useFetcher,
-} from "react-router";
+import { useFetcher } from "react-router";
 import { agent } from "~/lib/api";
+import type { Route } from "./+types/home";
 
-export const meta: MetaFunction = () => {
+export const meta: Route.MetaFunction = () => {
   return [
     { title: "New React-Router v7 App" },
     { name: "description", content: "Welcome to Remix!" },
   ];
 };
 
-export async function action({ request }: ActionFunctionArgs) {
-  // we call the method with the name of the strategy we want to use and the
-  // request object, optionally we pass an object with the URLs we want the user
-  // to be redirected to after a success or a failure
-  // return await authenticator.authenticate("user-pass", request, {
-  //   successRedirect: "/dashboard",
-  //   failureRedirect: "/",
-  // });
+export async function action({ request }: Route.ActionArgs) {
   const form = await request.formData();
+
   let identifier = form.get("identifier") as string;
   let password = form.get("password") as string;
+
   const user = await agent.login({ identifier, password });
+
   console.log(user);
   return null;
 }
