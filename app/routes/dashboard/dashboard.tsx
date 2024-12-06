@@ -1,31 +1,24 @@
-import { LoaderFunctionArgs } from "@remix-run/router";
-import { authenticator } from "~/services/auth.server";
 import { agent } from "~/lib/api";
-import { redirect, useLoaderData } from "@remix-run/react";
 import Post from "~/components/Post/Post";
-import { FeedViewPost } from "@atproto/api/src/client/types/app/bsky/feed/defs";
+import type { FeedViewPost } from "@atproto/api/src/client/types/app/bsky/feed/defs";
+
+import type { Route } from "./+types/dashboard";
 
 // https://blog.jobins.jp/how-to-set-border-lines-on-a-css-grid-layout
 import styles from "./dashboard.client.css?url";
-import type { LinksFunction } from "@remix-run/node";
+import { useLoaderData } from "react-router";
 
 // https://remix.run/docs/en/main/styling/css
-export const links: LinksFunction = () => [{ rel: "stylesheet", href: styles }];
+export const links: Route.LinksFunction = () => [
+  { rel: "stylesheet", href: styles },
+];
 
-export async function loader({ request }: LoaderFunctionArgs) {
-  // If the user is already authenticated redirect to /dashboard directly
-  const user = await authenticator.isAuthenticated(request, {
-    failureRedirect: "/",
-  });
-
-  if (!user) {
-    throw redirect("/");
-  }
+export async function loader({}: Route.LoaderArgs) {
   const {
     data: { feed: postsArray, cursor: nextPage },
   } = await agent.getTimeline({ cursor: "", limit: 50 });
 
-  const profile = await agent.getProfile({ actor: user.data.did ?? "" });
+  const profile = await agent.getProfile({ actor: agent.session?.did ?? "" });
 
   return { postsArray, nextPage, profile };
 }

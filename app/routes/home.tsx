@@ -1,7 +1,9 @@
-import type { MetaFunction } from "@remix-run/node";
-import { useFetcher } from "@remix-run/react";
-import { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/router";
-import { authenticator } from "~/services/auth.server";
+import {
+  type ActionFunctionArgs,
+  type MetaFunction,
+  useFetcher,
+} from "react-router";
+import {agent} from "~/lib/api";
 
 export const meta: MetaFunction = () => {
   return [
@@ -14,13 +16,19 @@ export async function action({ request }: ActionFunctionArgs) {
   // we call the method with the name of the strategy we want to use and the
   // request object, optionally we pass an object with the URLs we want the user
   // to be redirected to after a success or a failure
-  return await authenticator.authenticate("user-pass", request, {
-    successRedirect: "/dashboard",
-    failureRedirect: "/",
-  });
+  // return await authenticator.authenticate("user-pass", request, {
+  //   successRedirect: "/dashboard",
+  //   failureRedirect: "/",
+  // });
+  const form = await request.formData();
+  let identifier = form.get("identifier") as string;
+  let password = form.get("password") as string;
+  const user = await agent.login({ identifier, password });
+  console.log(user);
+  return null;
 }
 
-export default function Component() {
+export default function Home() {
   const fetcher = useFetcher();
 
   return (
