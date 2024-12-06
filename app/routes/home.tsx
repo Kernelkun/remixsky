@@ -3,11 +3,11 @@ import {
   type MetaFunction,
   useFetcher,
 } from "react-router";
-import {agent} from "~/lib/api";
+import { agent } from "~/lib/api";
 
 export const meta: MetaFunction = () => {
   return [
-    { title: "New Remix App" },
+    { title: "New React-Router v7 App" },
     { name: "description", content: "Welcome to Remix!" },
   ];
 };
