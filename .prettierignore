@@ -2,3 +2,5 @@
 build
 coverage
 node_modules
+
+# https://dev.to/josephciullo/how-to-customize-import-sorting-in-javascript-with-prettier-and-regex-1h8j
