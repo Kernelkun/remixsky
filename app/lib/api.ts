@@ -1,5 +1,6 @@
 import { AtpAgent, type AtpSessionData } from "@atproto/api";
 import type { ComAtprotoServerCreateSession } from "@atproto/api/src/client";
+
 // import type { AtpAgentLoginOpts } from "@atproto/api/src/types";
 // import { jwtDecode } from "jwt-decode";
 //
@@ -19,7 +20,7 @@ import type { ComAtprotoServerCreateSession } from "@atproto/api/src/client";
 // }
 
 export const dataToSession = (
-  data: ComAtprotoServerCreateSession.Response["data"]
+  data: ComAtprotoServerCreateSession.Response["data"],
 ) => {
   return {
     refreshJwt: data.refreshJwt,

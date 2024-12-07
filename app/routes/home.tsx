@@ -1,9 +1,12 @@
 import { redirect, useFetcher } from "react-router";
+
+import type { ComAtprotoServerCreateSession } from "@atproto/api/src/client";
+
 import { agent, dataToSession } from "~/lib/api";
-import type { Route } from "./+types/home";
 import { authenticator } from "~/services/auth.server";
 import { sessionStorage } from "~/services/session.server";
-import type { ComAtprotoServerCreateSession } from "@atproto/api/src/client";
+
+import type { Route } from "./+types/home";
 
 export const meta: Route.MetaFunction = () => {
   return [

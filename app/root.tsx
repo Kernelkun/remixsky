@@ -1,16 +1,14 @@
+import type { ReactNode } from "react";
 import {
-  isRouteErrorResponse,
   Links,
   Meta,
   Outlet,
   Scripts,
   ScrollRestoration,
+  isRouteErrorResponse,
 } from "react-router";
 
-import type { ReactNode } from "react";
-
 import type { Route } from "./+types/root";
-
 import stylesheet from "./app.css?url";
 
 export const links: Route.LinksFunction = () => [
