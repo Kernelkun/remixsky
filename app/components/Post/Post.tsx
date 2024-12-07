@@ -1,9 +1,9 @@
-import { PostView } from "@atproto/api/src/client/types/app/bsky/feed/defs";
+import type { PostView } from "@atproto/api/src/client/types/app/bsky/feed/defs";
 import { RichText } from "@atproto/api";
-import { Facet } from "@atproto/api/src/rich-text/rich-text";
+import type { Facet } from "@atproto/api/src/rich-text/rich-text";
 
 const Post = ({ post }: { post: PostView }) => {
-  const { text, facets } = post.record as { text: string; facets: Facet[]};
+  const { text, facets } = post.record as { text: string; facets: Facet[] };
   const rt = new RichText({
     text: text,
     facets: facets,
@@ -20,7 +20,7 @@ const Post = ({ post }: { post: PostView }) => {
             href={`/profile/${segment.mention?.did}`}
           >
             {segment.text}
-          </a>,
+          </a>
         );
         break;
       }
@@ -28,7 +28,7 @@ const Post = ({ post }: { post: PostView }) => {
         textArray.push(
           <a className="text-blue-500" href={segment.link?.uri}>
             {segment.text}
-          </a>,
+          </a>
         );
         break;
       }

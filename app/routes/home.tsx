@@ -1,6 +1,9 @@
-import { useFetcher } from "react-router";
-import { agent } from "~/lib/api";
+import { redirect, useFetcher } from "react-router";
+import { agent, dataToSession } from "~/lib/api";
 import type { Route } from "./+types/home";
+import { authenticator } from "~/services/auth.server";
+import { sessionStorage } from "~/services/session.server";
+import type { ComAtprotoServerCreateSession } from "@atproto/api/src/client";
 
 export const meta: Route.MetaFunction = () => {
   return [
@@ -10,14 +13,45 @@ export const meta: Route.MetaFunction = () => {
 };
 
 export async function action({ request }: Route.ActionArgs) {
-  const form = await request.formData();
+  let user = await authenticator.authenticate("login", request);
 
-  let identifier = form.get("identifier") as string;
-  let password = form.get("password") as string;
+  let session = await sessionStorage.getSession(request.headers.get("cookie"));
+  session.set("user", user);
 
-  const user = await agent.login({ identifier, password });
+  throw redirect("/dashboard", {
+    headers: { "Set-Cookie": await sessionStorage.commitSession(session) },
+  });
+}
 
-  console.log(user);
+export async function loader({ request }: Route.LoaderArgs) {
+  console.log("HOME - LOADER");
+  let session = await sessionStorage.getSession(request.headers.get("cookie"));
+  let user = session.get("user") as ComAtprotoServerCreateSession.Response;
+
+  console.log({ user });
+
+  if (user) {
+    if (!agent.hasSession) {
+      let refreshedUser = await agent
+        .resumeSession(dataToSession(user.data))
+        .catch(async () => {
+          throw redirect("/dashboard", {
+            headers: {
+              "Set-Cookie": await sessionStorage.destroySession(session),
+            },
+          });
+        });
+
+      console.log({ refreshedUser });
+
+      session.set("user", refreshedUser);
+    }
+
+    throw redirect("/dashboard", {
+      headers: { "Set-Cookie": await sessionStorage.commitSession(session) },
+    });
+  }
+
   return null;
 }
 
@@ -44,7 +78,8 @@ export default function Home() {
               <input
                 className="px-1 bg-slate-50 border-neutral-800 border-2"
                 name="identifier"
-                type="text"
+                type="email"
+                // placeholder="Enter your handle (eg alice.bsky.social)"
                 required
               />
             </label>
